@@ -110,6 +110,7 @@ EventHandlerResult TypingBreaks::onSetup() {
   KeyboardHardware.storage().get(settings_base_, idle_time);
   if (idle_time == 0xffffffff) {
     KeyboardHardware.storage().put(settings_base_, settings);
+    KeyboardHardware.storage().commit();
   }
 
   KeyboardHardware.storage().get(settings_base_, settings);
@@ -193,6 +194,7 @@ EventHandlerResult TypingBreaks::onFocusEvent(const char *command) {
   }
 
   KeyboardHardware.storage().put(settings_base_, settings);
+  KeyboardHardware.storage().commit();
   return EventHandlerResult::EVENT_CONSUMED;
 }
 
