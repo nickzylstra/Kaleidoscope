@@ -63,7 +63,11 @@ void LEDRainbowWaveEffect::TransientLEDMode::update(void) {
 
   for (auto key_addr : KeyAddr::all()) {
     uint16_t key_hue = rainbow_hue + 16 * (key_addr.toInt() / 4);
-    if (key_hue >= 255)          {
+    // This is required to support more than 128 LEDs.
+    if (key_hue >= 511) {
+      key_hue -= 511;
+    }
+    if (key_hue >= 255) {
       key_hue -= 255;
     }
     cRGB rainbow = hsvToRgb(key_hue, rainbow_saturation, parent_->rainbow_value);
