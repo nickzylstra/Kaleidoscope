@@ -116,6 +116,8 @@
 enum {
   MACRO_VERSION_INFO,
   MACRO_ANY,
+  MACRO_CUTLINE,
+  MACRO_SELECTCURWORD,
 };
 
 
@@ -167,11 +169,18 @@ enum {
   *
   */
 
-enum {
-  PRIMARY,
+// enum {
+//   PRIMARY,
+//   NUMPAD,
+//   FUNCTION,
+// };  // layers
+enum { 
+  PRIMARY, 
+  FUNC,
   NUMPAD,
-  FUNCTION,
-};  // layers
+  PUNC,
+  QWERTY,
+}; // layers
 
 
 /**
@@ -187,10 +196,10 @@ enum {
   *
   */
 
-#define PRIMARY_KEYMAP_QWERTY
+// #define PRIMARY_KEYMAP_QWERTY
 // #define PRIMARY_KEYMAP_DVORAK
 // #define PRIMARY_KEYMAP_COLEMAK
-// #define PRIMARY_KEYMAP_CUSTOM
+#define PRIMARY_KEYMAP_CUSTOM
 
 
 /* This comment temporarily turns off astyle's indent enforcement
@@ -251,21 +260,19 @@ KEYMAPS(
    ShiftToLayer(FUNCTION)),
 
 #elif defined (PRIMARY_KEYMAP_CUSTOM)
-  // Edit this keymap to make a custom layout
   [PRIMARY] = KEYMAP_STACKED
-  (___,          Key_1, Key_2, Key_3, Key_4, Key_5, Key_LEDEffectNext,
-   Key_Backtick, Key_Q, Key_W, Key_E, Key_R, Key_T, Key_Tab,
-   Key_PageUp,   Key_A, Key_S, Key_D, Key_F, Key_G,
-   Key_PageDown, Key_Z, Key_X, Key_C, Key_V, Key_B, Key_Escape,
-   Key_LeftControl, Key_Backspace, Key_LeftGui, Key_LeftShift,
-   ShiftToLayer(FUNCTION),
-
-   M(MACRO_ANY),  Key_6, Key_7, Key_8,     Key_9,         Key_0,         LockLayer(NUMPAD),
-   Key_Enter,     Key_Y, Key_U, Key_I,     Key_O,         Key_P,         Key_Equals,
-                  Key_H, Key_J, Key_K,     Key_L,         Key_Semicolon, Key_Quote,
-   Key_RightAlt,  Key_N, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
-   Key_RightShift, Key_LeftAlt, Key_Spacebar, Key_RightControl,
-   ShiftToLayer(FUNCTION)),
+  (Key_Escape,     Key_1,              Key_2,            Key_3,            Key_4,          Key_5, LGUI(Key_Backtick),
+   Key_Backtick,   Key_W,              Key_C,            Key_L,            Key_D,          Key_K, Key_Tab,
+   Key_PageDown,   MT(LeftAlt, R),     MT(LeftShift, S), MT(LeftGui, T),   LT(PUNC, H),    Key_M,
+   Key_LeftShift,  Key_X,              Key_V,            Key_G,            Key_F,          Key_B, LALT(LGUI(Key_LeftArrow)),
+   LGUI(Key_X), Key_Spacebar, LGUI(Key_C), LGUI(Key_V), 
+   ShiftToLayer(FUNC),
+   Key_UpArrow,           Key_6,              Key_7,             Key_8,             Key_9,              Key_0,                LockLayer(NUMPAD),
+   Key_Enter,             Key_J,              Key_U,             Key_O,             Key_P,              Key_Y,                Key_Equals,
+                          Key_Comma,          LT(PUNC, A),       MT(RightGui, E),   MT(RightShift, N),  MT(RightAlt, I),      LCTRL(Key_Backtick),
+   Key_DownArrow,         LSHIFT(Key_Slash),  Key_Period,        Key_Quote,         Key_Z,              Key_Q,                Key_RightShift,
+   M(MACRO_CUTLINE), LGUI(Key_Z), Key_Backspace, Key_Delete,
+   ShiftToLayer(FUNC)),
 
 #else
 
@@ -275,6 +282,21 @@ KEYMAPS(
 
 
 
+  [FUNC] =  KEYMAP_STACKED
+  (___,                        Key_F1,                    Key_F2,            Key_F3,            Key_F4,             Key_F5,           ___,
+   Consumer_PlaySlashPause,    Consumer_Mute,             Key_mouseScrollR,  Key_mouseUp,       Key_mouseScrollL,   Key_mouseWarpEnd, Key_mouseWarpNE,
+   Consumer_ScanNextTrack,     Consumer_VolumeIncrement,  Key_mouseL,        Key_mouseDn,       Key_mouseR,         Key_mouseWarpNW,
+   Consumer_ScanPreviousTrack, Consumer_VolumeDecrement,  ___,               Key_mouseScrollDn, Key_mouseScrollUp,  Key_mouseWarpSW,  Key_mouseWarpSE,
+   ___, ___, ___, ___,
+   ShiftToLayer(PUNC),
+
+   Key_mouseBtnR,     Key_F6,                       Key_F7,               Key_F8,               Key_F9,                       Key_F10,    Key_F11,
+   ___,               Key_mouseBtnL,                LALT(Key_LeftArrow),  LALT(Key_RightArrow), M(MACRO_SELECTCURWORD),       ___,        Key_F12,
+                      Key_LeftArrow,                Key_DownArrow,        Key_UpArrow,          Key_RightArrow,               ___,        ___,
+   ___,               LSHIFT(LALT(Key_LeftArrow)),  Key_Home,             Key_End,              LSHIFT(LALT(Key_RightArrow)), ___,        ___,
+   ___, ___, ___, ___,
+   ShiftToLayer(PUNC)),
+
   [NUMPAD] =  KEYMAP_STACKED
   (___, ___, ___, ___, ___, ___, ___,
    ___, ___, ___, ___, ___, ___, ___,
@@ -283,26 +305,41 @@ KEYMAPS(
    ___, ___, ___, ___,
    ___,
 
-   M(MACRO_VERSION_INFO),  ___, Key_7, Key_8,      Key_9,              Key_KeypadSubtract, ___,
-   ___,                    ___, Key_4, Key_5,      Key_6,              Key_KeypadAdd,      ___,
-                           ___, Key_1, Key_2,      Key_3,              Key_Equals,         ___,
-   ___,                    ___, Key_0, Key_Period, Key_KeypadMultiply, Key_KeypadDivide,   Key_Enter,
+   M(MACRO_VERSION_INFO),  ___,                Key_7, Key_8,      Key_9,                  Key_KeypadDivide,   ___,
+   ___,                    ___,                Key_4, Key_5,      Key_6,                  Key_KeypadMultiply, ___,
+                           Key_Backspace,      Key_1, Key_2,      Key_3,                  Key_KeypadAdd,      ___,
+   ___,                    ___,                Key_0, Key_Period, Key_Equals,             Key_KeypadSubtract, Key_Enter,
+   ___, ___, ___, ___,        
+   ___),
+
+  [PUNC] =  KEYMAP_STACKED
+  (___, ___,           ___,           ___,                     ___,                      ___,           ___,
+   ___, LSHIFT(Key_5), LSHIFT(Key_4), LSHIFT(Key_LeftBracket), LSHIFT(Key_RightBracket), LSHIFT(Key_6), ___,
+   ___, LSHIFT(Key_7), Key_Pipe,      LSHIFT(Key_9),           LSHIFT(Key_0),            LSHIFT(Key_1),
+   ___, LSHIFT(Key_3), LSHIFT(Key_2), Key_LeftBracket,         Key_RightBracket,         Key_Backslash, ___,
+   ___, ___, ___, ___,
+   ___,
+
+   ___, ___,               ___,                ___,                ___,                   ___,                   ___,
+   ___, ___,               Key_Backtick,       LSHIFT(Key_8),      LSHIFT(Key_Equals),    ___,                   ___,
+        LSHIFT(Key_Minus), Key_Equals,         Key_Slash,          Key_Minus,             Key_Semicolon,         ___,
+   ___, ___,               LSHIFT(Key_Comma),  LSHIFT(Key_Period), LSHIFT(Key_Semicolon), LSHIFT(Key_Backtick),  ___,
    ___, ___, ___, ___,
    ___),
 
-  [FUNCTION] =  KEYMAP_STACKED
-  (___,      Key_F1,           Key_F2,      Key_F3,     Key_F4,        Key_F5,           Key_CapsLock,
-   Key_Tab,  ___,              Key_mouseUp, ___,        Key_mouseBtnR, Key_mouseWarpEnd, Key_mouseWarpNE,
-   Key_Home, Key_mouseL,       Key_mouseDn, Key_mouseR, Key_mouseBtnL, Key_mouseWarpNW,
-   Key_End,  Key_PrintScreen,  Key_Insert,  ___,        Key_mouseBtnM, Key_mouseWarpSW,  Key_mouseWarpSE,
-   ___, Key_Delete, ___, ___,
+  [QWERTY] = KEYMAP_STACKED
+  (___,          Key_1, Key_2, Key_3, Key_4, Key_5, ___,
+   Key_Backtick, Key_Q, Key_W, Key_E, Key_R, Key_T, ___,
+   ___,          Key_A, Key_S, Key_D, Key_F, Key_G,
+   ___,          Key_Z, Key_X, Key_C, Key_V, Key_B, ___,
+   ___, ___, ___, ___,
    ___,
 
-   Consumer_ScanPreviousTrack, Key_F6,                 Key_F7,                   Key_F8,                   Key_F9,          Key_F10,          Key_F11,
-   Consumer_PlaySlashPause,    Consumer_ScanNextTrack, Key_LeftCurlyBracket,     Key_RightCurlyBracket,    Key_LeftBracket, Key_RightBracket, Key_F12,
-                               Key_LeftArrow,          Key_DownArrow,            Key_UpArrow,              Key_RightArrow,  ___,              ___,
-   Key_PcApplication,          Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,             Key_Backslash,    Key_Pipe,
-   ___, ___, Key_Enter, ___,
+   ___,   Key_6, Key_7, Key_8,     Key_9,         Key_0,         ___,
+   ___,   Key_Y, Key_U, Key_I,     Key_O,         Key_P,         Key_Equals,
+          Key_H, Key_J, Key_K,     Key_L,         Key_Semicolon, Key_Quote,
+   ___,   Key_N, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
+   ___, ___, ___, ___,
    ___)
 ) // KEYMAPS(
 
@@ -352,14 +389,29 @@ static void anyKeyMacro(KeyEvent &event) {
 const macro_t *macroAction(uint8_t macro_id, KeyEvent &event) {
   switch (macro_id) {
 
-  case MACRO_VERSION_INFO:
-    versionInfoMacro(event.state);
-    break;
+    case MACRO_VERSION_INFO:
+      versionInfoMacro(event.state);
+      break;
+    
+    case MACRO_ANY:
+      anyKeyMacro(event);
+      break;
 
-  case MACRO_ANY:
-    anyKeyMacro(event);
-    break;
+    case MACRO_CUTLINE:
+      if (keyToggledOn(event.state))
+        return MACRO(D(LeftGui), T(LeftArrow), 
+                        D(LeftShift), T(RightArrow),
+                        U(LeftShift),
+                        T(X),
+                        U(LeftGui));  
+
+    case MACRO_SELECTCURWORD:
+      if (keyToggledOn(event.state))
+        return MACRO(D(LeftAlt), T(LeftArrow), 
+                        D(LeftShift), T(RightArrow),
+                        U(LeftShift), U(LeftAlt));
   }
+    
   return MACRO_NONE;
 }
 
@@ -573,7 +625,7 @@ KALEIDOSCOPE_INIT_PLUGINS(
   // Enables the "Sticky" behavior for modifiers, and the "Layer shift when
   // held" functionality for layer keys.
   OneShot,
-  OneShotConfig,
+  // OneShotConfig,
   EscapeOneShot,
   EscapeOneShotConfig,
 
@@ -664,6 +716,60 @@ void setup() {
   // layer for them. We need one extra byte per layer for bookkeeping, so we
   // reserve 17 / layer in total.
   LayerNames.reserve_storage(17 * 8);
+
+    // Speed up mouse movement
+  MouseKeys.speed = 12;
+  MouseKeys.speedDelay = 1;
+  MouseKeys.accelSpeed = 4;
+  MouseKeys.accelDelay = 64;
+  MouseKeys.setSpeedLimit(150);
+
+  // Qukeys setup
+  QUKEYS(
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(2, 1), Key_LeftControl),           // homerowL4
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(2, 2), Key_LeftShift),             // homerowL3
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(2, 3), ShiftToLayer(NAV)),         // homerowL2
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(2, 4), Key_LeftAlt),               // homerowL1
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(0, 7), Key_LeftGui),               // homerowLThumb1
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(1, 7), Key_LeftGui),               // homerowLThumb2
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(1, 8), Key_LeftGui),               // homaerowRThumb2
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(0, 8), Key_LeftGui),               // homerowRThumb1
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(2, 11), ShiftToLayer(PUNC)),       // homerowR1
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(2, 12), ShiftToLayer(MOUSE)),      // homerowR2
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(2, 13), Key_RightShift),           // homerowR3
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(2, 14), Key_RightControl)          // homerowR4
+    kaleidoscope::plugin::Qukey(0, KeyAddr(0, 6), Key_LEDEffectNext),            // led 
+    kaleidoscope::plugin::Qukey(0, KeyAddr(1, 6), LGUI(Key_Tab)),                // tab
+    kaleidoscope::plugin::Qukey(0, KeyAddr(2, 15), LALT(LSHIFT(Key_LeftGui))),   // '
+    kaleidoscope::plugin::Qukey(0, KeyAddr(3, 14), Key_RightControl),            // q
+    kaleidoscope::plugin::Qukey(0, KeyAddr(3, 1), Key_LeftControl),              // x
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(3, 15), Key_RightShift),           // minus
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(1, 15), M(MACRO_TRIPEQ)),             // =
+    kaleidoscope::plugin::Qukey(0, KeyAddr(2, 6), LALT(LGUI(Key_RightArrow))),   // esc
+    kaleidoscope::plugin::Qukey(0, KeyAddr(0, 15), LockLayer(QWERTY)),           // num
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(3, 1), LGUI(Key_Z)),               // x
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(3, 2), LGUI(Key_X)),               // v
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(3, 3), LGUI(Key_C)),               // g
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(3, 4), LGUI(Key_V)),               // f
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(3, 5), M(MACRO_CUTLINE)),          // b
+    kaleidoscope::plugin::Qukey(0, KeyAddr(0, 1), LGUI(Key_Q)),                  // 1
+    kaleidoscope::plugin::Qukey(0, KeyAddr(0, 2), LALT(LSHIFT(LGUI(Key_2)))),    // 2
+    kaleidoscope::plugin::Qukey(0, KeyAddr(0, 3), LALT(LSHIFT(LGUI(Key_3)))),    // 3
+    kaleidoscope::plugin::Qukey(0, KeyAddr(0, 4), LALT(LSHIFT(LGUI(Key_4)))),    // 4
+    kaleidoscope::plugin::Qukey(0, KeyAddr(1, 4), LGUI(Key_W)),                  // d
+    kaleidoscope::plugin::Qukey(0, KeyAddr(1, 3), LGUI(Key_T)),                  // l
+    kaleidoscope::plugin::Qukey(0, KeyAddr(1, 0), LGUI(Key_LeftArrow)),          // backtick
+    kaleidoscope::plugin::Qukey(0, KeyAddr(0, 5), LCTRL(LSHIFT(LGUI(Key_4)))),   // 5
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(0, 6), LGUI(Key_H)),               // led
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(2, 9), LCTRL(Key_UpArrow)),        // butterfly
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(1, 9), Key_UpArrow),               // enter
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(2, 0), Key_UpArrow),               // pgup
+    // kaleidoscope::plugin::Qukey(0, KeyAddr(3, 10), Key_Delete),               // n
+    kaleidoscope::plugin::Qukey(0, KeyAddr(2, 0), Key_PageUp)                    // pgup
+  )
+
+  // Qukeys.setHoldTimeout(250);
+  Qukeys.setOverlapThreshold(95);
 
   // Unless configured otherwise with Chrysalis, we want to make sure that the
   // firmware starts with LED effects off. This avoids over-taxing devices that
